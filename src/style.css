@@ -1,0 +1,16 @@
+:root{
+    font-family: "Inter", sans-serif;
+    font-weight: 500;
+}
+
+body{
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: "Inter", sans-serif;
+    background-color: rgb(0, 0, 0);
+}
+
+#app{
+    height: 100%;
+}
