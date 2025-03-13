@@ -1,25 +1,42 @@
 <template>
   <div class="switcher">
     <ul>
-      <li>
-        <label for="">Temperature</label>
+      <li v-for="(option, index) in options" :key="index">
+        <label v-if="showLable" for="">{{ option.label }}</label>
         <div class="switchers">
-          <button class="selected">°C</button>
-          <button>°F</button>
-        </div>
-      </li>
-      <li>
-        <label for="">Measurements</label>
-        <div class="switchers">
-          <button class="selected">Metric</button>
-          <button>Imperial</button>
+          <button
+            v-for="(btn, i) in option.buttons"
+            :key="i"
+            :class="{ selected: btn.value == option.value }"
+          >
+            {{ btn.label }}
+          </button>
         </div>
       </li>
     </ul>
   </div>
 </template>
 
-<script lang="ts" scoped></script>
+<script lang="ts" setup>
+import { defineProps } from "vue";
+
+interface btn {
+  label: string;
+  value: string | number;
+}
+interface Option {
+  label: string;
+  buttons: btn[];
+  value: string | number;
+}
+withDefaults(defineProps<{
+  options: Option[];
+  showLable?:boolean;
+}>(),{
+  showLable:true
+})
+
+</script>
 
 <style>
 .switcher {

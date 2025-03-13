@@ -3,6 +3,7 @@ import moment from "moment";
 import MenuPopper from "./components/MenuPopper.vue";
 import WeatherInfo from "./components/WeatherInfo.vue";
 import WeatherDetailes from "./components/WeatherDetailes.vue";
+import WeatherForcast from "./components/WeatherForcast.vue";
 import WeatherAqi from "./components/WeatherAqi.vue";
 </script>
 
@@ -24,6 +25,7 @@ import WeatherAqi from "./components/WeatherAqi.vue";
     <WeatherInfo/>
     <WeatherDetailes/>
     <WeatherAqi/>
+    <WeatherForcast />
   
   </div>
 </template>

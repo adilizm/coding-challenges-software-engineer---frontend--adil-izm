@@ -5,14 +5,45 @@
         <img src="../assets/menu.svg" alt="" />
       </button>
       <template #content>
-        <Switchers/>
+        <Switchers :options="menuOptions" />
       </template>
     </Popper>
   </div>
 </template>
 
 <script setup lang="ts">
-import Switchers from "./Switchers.vue" 
+import Switchers from "./Switchers.vue";
+
+const menuOptions = [
+  {
+    label: "Temperature",
+    buttons: [
+      {
+        label: "°C",
+        value: "°C",
+      },
+      {
+        label: "°F",
+        value: "°F",
+      },
+    ],
+    value: "°C",
+  },
+  {
+    label: "Measurements",
+    buttons: [
+      {
+        label: "Metric",
+        value: "Metric",
+      },
+      {
+        label: "Imperial",
+        value: "Imperial",
+      },
+    ],
+    value: "Imperial",
+  },
+];
 </script>
 <style scoped>
 button {
