@@ -29,6 +29,7 @@
   border-width: 1px;
   padding: 16px;
   gap: 24px;
+  background-color: white;
 }
 .switcher > ul {
   display: flex;

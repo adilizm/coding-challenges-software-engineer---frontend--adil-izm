@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import moment from "moment";
 import MenuPopper from "./components/MenuPopper.vue";
+import WeatherInfo from "./components/WeatherInfo.vue";
 </script>
 
 <template>
   <div class="weather-container">
-    <div class="weather-card">
+    <div class="weather-location">
       <div class="weather-head">
         <h2>Casablanca</h2>
         <div class="lable">
@@ -15,16 +16,19 @@ import MenuPopper from "./components/MenuPopper.vue";
           {{ moment(new Date()).format("h:mm A") }}
         </div>
       </div>
-      <MenuPopper/>
+      <MenuPopper />
     </div>
+
+    <WeatherInfo/>
+  
   </div>
 </template>
 
 <style>
 .weather-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
   background-color: white;
   max-width: 702px;
   width: 100%;
@@ -37,7 +41,7 @@ import MenuPopper from "./components/MenuPopper.vue";
   margin: auto;
   margin-top: 20px;
 }
-.weather-card {
+.weather-location {
   display: flex;
   justify-content: space-between;
   align-items: start;
