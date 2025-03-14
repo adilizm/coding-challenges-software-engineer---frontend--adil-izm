@@ -13,6 +13,9 @@
 
 <script setup lang="ts">
 import Switchers from "./Switchers.vue";
+import { useWeatherStore } from "../weatherStore";
+
+const weatherStore = useWeatherStore();
 
 const menuOptions = [
   {
@@ -27,7 +30,7 @@ const menuOptions = [
         value: "°F",
       },
     ],
-    value: "°C",
+    value: weatherStore.getTempUnit,
   },
   {
     label: "Measurements",

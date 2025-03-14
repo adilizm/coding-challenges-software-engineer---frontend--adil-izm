@@ -1,15 +1,23 @@
 <template>
   <div class="weather-info">
     <div class="temperature-main">
-      <img src="https://cdn.weatherapi.com/weather/64x64/day/116.png" />
-      <div class="temperature">19°C</div>
+      <img :src="weatherstore.getConditionIcon" />
+      <div class="temperature">{{ weatherstore.getTemperature }} {{ weatherstore.getTempUnit }}</div>
     </div>
     <div class="temp-detailes">
-      <div class="temp-description">Partially Cloudy</div>
-      <span class="temp-feeling">Feels like 21°C</span>
+      <div class="temp-description">{{ weatherstore.getConditionText }}</div>
+      <span class="temp-feeling">Feels like {{ weatherstore.getFeelingLike }}{{ weatherstore.getTempUnit }}</span>
     </div>
   </div>
 </template>
+
+<script setup>
+import { useWeatherStore } from '../weatherStore';
+
+
+const weatherstore = useWeatherStore()
+
+</script>
 <style>
 .weather-info {
   display: flex;

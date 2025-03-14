@@ -7,12 +7,15 @@
             </span>
         </div>
         <div class="aqi-bar">
-            <div class="fill"></div>
+            <div class="fill" :style="`width:${(weatherstore.getAQI * 100 )/300}%;background-color:${weatherstore.getAqiColor}`"></div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { useWeatherStore } from '../weatherStore';
+
+const weatherstore = useWeatherStore();
 
 </script>
 
@@ -38,8 +41,6 @@
     border-radius: 6px;
 }
 .fill{
-    background-color: red;
-    width: 50%;
     border-radius: 6px;
     height: 6px;
 }

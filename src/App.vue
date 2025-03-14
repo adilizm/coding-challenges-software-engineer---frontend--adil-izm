@@ -5,13 +5,21 @@ import WeatherInfo from "./components/WeatherInfo.vue";
 import WeatherDetailes from "./components/WeatherDetailes.vue";
 import WeatherForcast from "./components/WeatherForcast.vue";
 import WeatherAqi from "./components/WeatherAqi.vue";
+import { onMounted } from "vue";
+import { useWeatherStore } from "./weatherStore";
+
+const weatherStore = useWeatherStore();
+
+onMounted(()=>{
+  weatherStore.fetchCity();
+})
 </script>
 
 <template>
   <div class="weather-container">
     <div class="weather-location">
       <div class="weather-head">
-        <h2>Casablanca</h2>
+        <h2>{{ weatherStore.getCity }}</h2>
         <div class="lable">
           {{ moment(new Date()).format("dddd, MMMM D, YYYY") }}
         </div>
