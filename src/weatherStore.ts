@@ -161,7 +161,6 @@ export const useWeatherStore = defineStore('weather', {
             axios.get(`http://api.weatherapi.com/v1/current.json?key=${import.meta.env.VITE_API_KEY}&q=${this.$state.city}&aqi=yes`)
             .then(res => {
                 this.$state.data = res.data,
-                console.log('d = ', res.data)
                 this.$state.pollutants  = res.data.current.air_quality;
                 this.caculateAQI();
             });
@@ -216,6 +215,13 @@ export const useWeatherStore = defineStore('weather', {
             this.$state.AQI = Math.max(...Object.values(this.$state.aqiValues).map(value => Number(value)));
          
         },
+        updateTempUnit(newVal:string){
+            this.$state.temp_unit = newVal;
+        },        
+        updateWindUnit(newVal:string){
+            this.$state.wind_unit = newVal;
+        }
+        
 
 
     }

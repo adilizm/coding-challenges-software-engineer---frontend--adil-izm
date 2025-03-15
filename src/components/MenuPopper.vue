@@ -5,48 +5,51 @@
         <img src="../assets/menu.svg" alt="" />
       </button>
       <template #content>
-        <Switchers :options="menuOptions" />
+        <Switchers
+          :key="weatherStore.getTempUnit"
+          :options="menuOptions"
+          @update="handleUpdate"
+        />
       </template>
     </Popper>
   </div>
 </template>
-
 <script setup lang="ts">
 import Switchers from "./Switchers.vue";
 import { useWeatherStore } from "../weatherStore";
+import { computed } from "vue";
 
 const weatherStore = useWeatherStore();
 
-const menuOptions = [
+const menuOptions = computed(() => [
   {
     label: "Temperature",
     buttons: [
-      {
-        label: "°C",
-        value: "°C",
-      },
-      {
-        label: "°F",
-        value: "°F",
-      },
+      { label: "°C", value: "°C" },
+      { label: "°F", value: "°F" },
     ],
-    value: weatherStore.getTempUnit,
+    value: weatherStore.getTempUnit, 
+    actionChanger: weatherStore.updateTempUnit,
   },
   {
-    label: "Measurements",
+    label: "Wind Measurements",
     buttons: [
-      {
-        label: "Metric",
-        value: "Metric",
-      },
-      {
-        label: "Imperial",
-        value: "Imperial",
-      },
+      { label: "kph", value: "kph" },
+      { label: "mph", value: "mph" },
     ],
-    value: "Imperial",
+    value: weatherStore.getWindUnit,
+    actionChanger: weatherStore.updateWindUnit,
   },
-];
+]);
+
+const handleUpdate = (eventLabel: string, payload: any) => {
+  const option = menuOptions.value.find(
+    (option) => option.label === eventLabel
+  );
+  if (option) {
+    option.actionChanger(payload);
+  }
+};
 </script>
 <style scoped>
 button {

@@ -7,6 +7,7 @@
           <button
             v-for="(btn, i) in option.buttons"
             :key="i"
+            @click="option.actionChanger(btn.value)"
             :class="{ selected: btn.value == option.value }"
           >
             {{ btn.label }}
@@ -18,8 +19,10 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from "vue";
+import { defineProps, defineEmits } from "vue";
+import { useWeatherStore } from "../weatherStore";
 
+const weatherStore = useWeatherStore();
 interface btn {
   label: string;
   value: string | number;
@@ -28,14 +31,25 @@ interface Option {
   label: string;
   buttons: btn[];
   value: string | number;
+  actionChanger: any;
 }
-withDefaults(defineProps<{
-  options: Option[];
-  showLable?:boolean;
-}>(),{
-  showLable:true
-})
+withDefaults(
+  defineProps<{
+    options: Option[];
+    showLable?: boolean;
+  }>(),
+  {
+    showLable: true,
+  }
+);
 
+const emit = defineEmits<{
+  (event: "update", eventName: string, data: any): void;
+}>();
+
+const handleClick = (eventName: string, data: any) => {
+  emit("update", eventName, data);
+};
 </script>
 
 <style>
