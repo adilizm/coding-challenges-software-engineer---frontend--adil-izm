@@ -45,7 +45,6 @@ onMounted(()=>{
   justify-content: center;
   background-color: white;
   max-width: 702px;
-  width: 100%;
   border-radius: 24px;
   padding-top: 24px;
   padding-right: 32px;
@@ -57,9 +56,15 @@ onMounted(()=>{
 }
 .weather-location {
   display: flex;
+  flex-direction: column-reverse;
   justify-content: space-between;
   align-items: start;
   width: 100%;
+}
+@media (min-width: 736px) {
+  .weather-location {
+    flex-direction: row;
+  }
 }
 .weather-head {
   display: flex;

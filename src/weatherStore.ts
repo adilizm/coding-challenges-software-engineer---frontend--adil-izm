@@ -13,7 +13,14 @@ interface WeatherState {
     pollutants: any;
     aqiValues: any;
     AQI: number;
+    cities: city[];
     forecast_period: string;
+}
+
+interface city {
+    id: number;
+    name: string;
+    country: string;
 }
 export const useWeatherStore = defineStore('weather', {
     state: (): WeatherState => ({
@@ -87,6 +94,7 @@ export const useWeatherStore = defineStore('weather', {
         aqiValues: [],
         AQI: 0,
         forecast_period: 'hourly',
+        cities: [],
 
     }),
     persist: {
@@ -123,7 +131,8 @@ export const useWeatherStore = defineStore('weather', {
                     return state.data.forecast.forecastday
                 }
             }
-        }
+        },
+        getCities: (state): city[] => state.cities,
     },
     actions: {
         fetchCity() {
@@ -199,6 +208,19 @@ export const useWeatherStore = defineStore('weather', {
         },
         updateForecastPeriod(newVal: string) {
             this.$state.forecast_period = newVal;
+        },
+        searchCity(query: string) {
+            axios.get(`http://api.weatherapi.com/v1/search.json?key=${import.meta.env.VITE_API_KEY}&q=${query}`)
+                .then(res => {
+                    this.$state.cities = [];
+                    res.data.forEach(city => {
+                        this.$state.cities.push({ id: city.id, name: city.name, country: city.country })
+                    })
+                });
+        },
+        setCity(cityName:string){
+            this.$state.city = cityName;
+            this.fetchWeatherData();
         }
     }
 })
