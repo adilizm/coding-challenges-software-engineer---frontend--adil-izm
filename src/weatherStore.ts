@@ -1,65 +1,12 @@
 import axios from 'axios';
 import { defineStore } from 'pinia'
-
-interface WeatherData {
-    location: {
-        name: string;
-        region: string;
-        country: string;
-        lat: number;
-        lon: number;
-        tz_id: string;
-        localtime_epoch: number;
-        localtime: string;
-    };
-    current: {
-        last_updated_epoch: number;
-        last_updated: string;
-        temp_c: number;
-        temp_f: number;
-        is_day: number;
-        condition: {
-            text: string;
-            icon: string;
-            code: number;
-        };
-        wind_mph: number;
-        wind_kph: number;
-        wind_degree: number;
-        wind_dir: string;
-        pressure_mb: number;
-        pressure_in: number;
-        precip_mm: number;
-        precip_in: number;
-        humidity: number;
-        cloud: number;
-        feelslike_c: number;
-        feelslike_f: number;
-        vis_km: number;
-        vis_miles: number;
-        uv: number;
-        gust_mph: number;
-        gust_kph: number;
-        air_quality: {
-            co: number;
-            no2: number;
-            o3: number;
-            so2: number;
-            pm2_5: number;
-            pm10: number;
-            "us-epa-index": number;
-            "gb-defra-index": number;
-        };
-    };
-    forecast:any
-}
-
+import type { WeatherResponse } from './types';
 
 interface WeatherState {
     city: string;
     description: string;
     feeling: string;
-    data: WeatherData;
+    data: WeatherResponse;
     temp_unit: string;
     precip_unit: string;
     wind_unit: string;
@@ -67,14 +14,12 @@ interface WeatherState {
     aqiValues: any;
     AQI: number;
     forecast_period: string;
-    forecastdata: any;
 }
 export const useWeatherStore = defineStore('weather', {
     state: (): WeatherState => ({
-
-        city: "Agadir",
-        description: "partially cloudy",
-        feeling: "feels like 21",
+        city: "",
+        description: "",
+        feeling: "",
         data: {
             location: {
                 name: "",
@@ -109,6 +54,12 @@ export const useWeatherStore = defineStore('weather', {
                 cloud: 0,
                 feelslike_c: 0,
                 feelslike_f: 0,
+                windchill_c: 0,
+                windchill_f: 0,
+                heatindex_c: 0,
+                heatindex_f: 0,
+                dewpoint_c: 0,
+                dewpoint_f: 0,
                 vis_km: 0,
                 vis_miles: 0,
                 uv: 0,
@@ -125,6 +76,9 @@ export const useWeatherStore = defineStore('weather', {
                     "gb-defra-index": 0,
                 },
             },
+            forecast: {
+                forecastday: []
+            }
         },
         temp_unit: "°C",
         precip_unit: 'mm',
@@ -133,8 +87,11 @@ export const useWeatherStore = defineStore('weather', {
         aqiValues: [],
         AQI: 0,
         forecast_period: 'hourly',
-        forecastdata: {},
+
     }),
+    persist: {
+        pick: ['city', 'temp_unit', 'precip_unit', 'wind_unit'],
+    },
     getters: {
         getCity: (state): string => state.city,
         getTempUnit: (state): string => state.temp_unit,
@@ -158,23 +115,29 @@ export const useWeatherStore = defineStore('weather', {
             return "#7E0023"; // Maroon (Hazardous)
         },
         getForecastPeriod: (state): string => state.forecast_period,
-        getforecastData:(state):any=>{
-            if(state.forecast_period == 'hourly'){
-                return state.data?.forecast?.forecastday[0]?.hour
-            }else{
-                return state.data?.forecast?.forecastday
+        getforecastData: (state): any => {
+            if (state.data.forecast.forecastday) {
+                if (state.forecast_period == 'hourly') {
+                    return state.data.forecast.forecastday?.[0]?.hour ?? [];
+                } else {
+                    return state.data.forecast.forecastday
+                }
             }
         }
     },
     actions: {
         fetchCity() {
-            axios.get('http://ip-api.com/json').then(res => { this.$state.city = res.data.city, this.fetchWeatherData() });
+            if (this.$state.city) {
+                this.fetchWeatherData()
+            } else {
+                axios.get('http://ip-api.com/json').then(res => { this.$state.city = res.data.city, this.fetchWeatherData() });
+            }
         },
         fetchWeatherData() {
             axios.get(`http://api.weatherapi.com/v1/forecast.json?key=${import.meta.env.VITE_API_KEY}&q=${this.$state.city}&aqi=yes&alerts=no&days=7`)
                 .then(res => {
                     this.$state.data = res.data,
-                    this.$state.pollutants = res.data.current.air_quality;
+                        this.$state.pollutants = res.data.current.air_quality;
                     this.caculateAQI();
                 });
         },
@@ -236,9 +199,6 @@ export const useWeatherStore = defineStore('weather', {
         },
         updateForecastPeriod(newVal: string) {
             this.$state.forecast_period = newVal;
-        },
-
-
-
+        }
     }
 })
