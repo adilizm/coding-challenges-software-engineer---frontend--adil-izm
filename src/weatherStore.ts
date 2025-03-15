@@ -51,6 +51,7 @@ interface WeatherData {
             "gb-defra-index": number;
         };
     };
+    forecast:any
 }
 
 
@@ -65,6 +66,8 @@ interface WeatherState {
     pollutants: any;
     aqiValues: any;
     AQI: number;
+    forecast_period: string;
+    forecastdata: any;
 }
 export const useWeatherStore = defineStore('weather', {
     state: (): WeatherState => ({
@@ -129,6 +132,8 @@ export const useWeatherStore = defineStore('weather', {
         pollutants: {},
         aqiValues: [],
         AQI: 0,
+        forecast_period: 'hourly',
+        forecastdata: {},
     }),
     getters: {
         getCity: (state): string => state.city,
@@ -144,26 +149,34 @@ export const useWeatherStore = defineStore('weather', {
         getWindUnit: (state): string => state.wind_unit,
         getFeelingLike: (state): number => state.temp_unit == "°C" ? state.data.current.feelslike_c : state.data.current.feelslike_f,
         getAQI: (state): number => state.AQI,
-        getAqiColor: (state) => {      
+        getAqiColor: (state) => {
             if (state.AQI <= 50) return "#00E400"; // Green
             if (state.AQI <= 100) return "#FFFF00"; // Yellow
             if (state.AQI <= 150) return "#FF7E00"; // Orange
             if (state.AQI <= 200) return "#FF0000"; // Red
             if (state.AQI <= 300) return "#8F3F97"; // Purple
             return "#7E0023"; // Maroon (Hazardous)
+        },
+        getForecastPeriod: (state): string => state.forecast_period,
+        getforecastData:(state):any=>{
+            if(state.forecast_period == 'hourly'){
+                return state.data?.forecast?.forecastday[0]?.hour
+            }else{
+                return state.data?.forecast?.forecastday
+            }
         }
     },
     actions: {
         fetchCity() {
-            axios.get('http://ip-api.com/json').then(res => { this.$state.city = res.data.city, this.fetchCurrentWeatherData() });
+            axios.get('http://ip-api.com/json').then(res => { this.$state.city = res.data.city, this.fetchWeatherData() });
         },
-        fetchCurrentWeatherData() {
-            axios.get(`http://api.weatherapi.com/v1/current.json?key=${import.meta.env.VITE_API_KEY}&q=${this.$state.city}&aqi=yes`)
-            .then(res => {
-                this.$state.data = res.data,
-                this.$state.pollutants  = res.data.current.air_quality;
-                this.caculateAQI();
-            });
+        fetchWeatherData() {
+            axios.get(`http://api.weatherapi.com/v1/forecast.json?key=${import.meta.env.VITE_API_KEY}&q=${this.$state.city}&aqi=yes&alerts=no&days=7`)
+                .then(res => {
+                    this.$state.data = res.data,
+                    this.$state.pollutants = res.data.current.air_quality;
+                    this.caculateAQI();
+                });
         },
         caculateAQI() {
             const breakpoints: Record<string, Array<[number, number, number, number]>> = {
@@ -213,15 +226,18 @@ export const useWeatherStore = defineStore('weather', {
 
             // The final AQI is the highest AQI among all pollutants
             this.$state.AQI = Math.max(...Object.values(this.$state.aqiValues).map(value => Number(value)));
-         
+
         },
-        updateTempUnit(newVal:string){
+        updateTempUnit(newVal: string) {
             this.$state.temp_unit = newVal;
-        },        
-        updateWindUnit(newVal:string){
+        },
+        updateWindUnit(newVal: string) {
             this.$state.wind_unit = newVal;
-        }
-        
+        },
+        updateForecastPeriod(newVal: string) {
+            this.$state.forecast_period = newVal;
+        },
+
 
 
     }

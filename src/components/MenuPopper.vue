@@ -5,11 +5,7 @@
         <img src="../assets/menu.svg" alt="" />
       </button>
       <template #content>
-        <Switchers
-          :key="weatherStore.getTempUnit"
-          :options="menuOptions"
-          @update="handleUpdate"
-        />
+        <Switchers :options="menuOptions"/>
       </template>
     </Popper>
   </div>
@@ -41,15 +37,6 @@ const menuOptions = computed(() => [
     actionChanger: weatherStore.updateWindUnit,
   },
 ]);
-
-const handleUpdate = (eventLabel: string, payload: any) => {
-  const option = menuOptions.value.find(
-    (option) => option.label === eventLabel
-  );
-  if (option) {
-    option.actionChanger(payload);
-  }
-};
 </script>
 <style scoped>
 button {
